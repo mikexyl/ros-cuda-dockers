@@ -1,18 +1,18 @@
-BASE_IMAGE=nvcr.io/nvidia/cuda:12.1.0-runtime-ubuntu18.04
-ROS_DISTRO=melodic
+BASE_IMAGE=nvcr.io/nvidia/cuda:12.3.1-runtime-ubuntu20.04
+ROS_DISTRO=noetic
 IMAGE_NAME=cuda-ros-base:${ROS_DISTRO}
 DOCKER_USERNAME=mikexyliu
 
 # build command to build docker image
 build:
-	docker build -t cuda-ros-base:melodic \
+	docker build -t cuda-ros-base:$(ROS_DISTRO) \
 		--build-arg BASE_IMAGE=$(BASE_IMAGE) \
 		--build-arg ROS_DISTRO=$(ROS_DISTRO) \
 		-f Dockerfile .
 
 build-ros2:
 	docker build -t cuda-ros-base:foxy \
-		--build-arg BASE_IMAGE=nvcr.io/nvidia/cuda:12.2.2-cudnn8-runtime-ubuntu20.04 \
+		--build-arg BASE_IMAGE=nvcr.io/nvidia/cuda:12.3.1-runtime-ubuntu20.04 \
 		--build-arg ROS_DISTRO=foxy \
 		-f Dockerfile.ros2 .
 
@@ -48,5 +48,3 @@ push:
 	docker tag opencv:${ROS_DISTRO}-cuda $(DOCKER_USERNAME)/opencv:${ROS_DISTRO}-cuda
 	docker push $(DOCKER_USERNAME)/opencv:${ROS_DISTRO}-cuda
 
-
-	
