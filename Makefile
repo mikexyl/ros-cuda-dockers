@@ -10,11 +10,34 @@ build:
 		--build-arg ROS_DISTRO=$(ROS_DISTRO) \
 		-f Dockerfile .
 
-build-ros2:
+build-ros2-foxy:
 	docker build -t cuda-ros-base:foxy \
-		--build-arg BASE_IMAGE=nvcr.io/nvidia/cuda:12.3.1-runtime-ubuntu20.04 \
 		--build-arg ROS_DISTRO=foxy \
+		--build-arg BASE_IMAGE=nvcr.io/nvidia/cuda:12.3.1-runtime-ubuntu20.04 \
 		-f Dockerfile.ros2 .
+
+build-ros2-iron:
+	docker build -t cuda-ros-base:iron \
+		-f Dockerfile.ros2 .
+
+build-ros-ros2:
+	docker build -t cuda-ros-base:noetic-foxy \
+		--build-arg ROS_DISTRO_ROS2=foxy \
+		-f Dockerfile.ros-ros2 .
+
+build-realsense:
+	docker build -t librealsense-builder \
+		--build-arg LIBRS_VERSION=2.54.2 \
+		-f Dockerfile.realsense \
+		--target librealsense-builder \
+		.
+
+build-realsense-app:
+	docker build -t librealsense \
+		--build-arg LIBRS_VERSION=2.54.2 \
+		-f Dockerfile.realsense \
+		--target librealsense \
+		.
 
 run:
 	docker run -it --rm \
@@ -23,6 +46,13 @@ run:
 		$(IMAGE_NAME) \
 		bash
 
+run-realsense:
+	docker run -it --rm \
+    -v /dev:/dev \
+    --device-cgroup-rule "c 81:* rmw" \
+    --device-cgroup-rule "c 189:* rmw" \
+    librealsense
+	
 # FROM opencv44-ubuntu20 as opencv44-builder
 # RUN apt-get update && apt-get install -y \
 #	libgtk2.0-dev \
