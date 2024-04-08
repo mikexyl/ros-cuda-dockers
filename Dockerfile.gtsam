@@ -1,0 +1,27 @@
+ARG BASE_IMAGE=cuda-ros-base:foxy
+FROM ${BASE_IMAGE}
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install boost, eigen, tbb and mkl
+RUN apt-get update && apt-get install -y libtbb-dev libboost-all-dev \
+    cmake wget libeigen3-dev git software-properties-common apt-utils \
+    libmetis-dev libatlas-base-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN git clone https://github.com/borglab/gtsam.git
+
+WORKDIR /gtsam
+ARG gtsam_version=4.2
+RUN git checkout ${gtsam_version} && \
+    mkdir build && cd build && \
+    cmake .. \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DGTSAM_USE_SYSTEM_EIGEN=ON \
+    -DGTSAM_USE_SYSTEM_METIS=ON \
+    -DGTSAM_POSE3_EXPMAP=ON \
+    -DGTSAM_ROT3_EXPMAP=ON \
+    -DGTSAM_TANGENT_PREINTEGRATION=OFF \
+    -DGTSAM_BUILD_UNSTABLE=ON && \
+    make -j$(nproc) && make install 
+

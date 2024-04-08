@@ -1,0 +1,4 @@
+ARG BASE_IMAGE=ros:noetic-ros-base-focal
+FROM $BASE_IMAGE
+
+# install mavros packages

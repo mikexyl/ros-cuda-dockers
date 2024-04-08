@@ -10,20 +10,31 @@ build:
 		--build-arg ROS_DISTRO=$(ROS_DISTRO) \
 		-f Dockerfile .
 
-build-ros2-foxy:
+build-foxy:
 	docker build -t cuda-ros-base:foxy \
 		--build-arg ROS_DISTRO=foxy \
 		--build-arg BASE_IMAGE=nvcr.io/nvidia/cuda:12.3.1-runtime-ubuntu20.04 \
 		-f Dockerfile.ros2 .
 
-build-ros2-iron:
+build-iron:
 	docker build -t cuda-ros-base:iron \
+		-f Dockerfile.ros2 .
+
+build-humble:
+	docker build -t cuda-ros-base:humble \
+		--build-arg ROS_DISTRO=humble \
 		-f Dockerfile.ros2 .
 
 build-ros-ros2:
 	docker build -t cuda-ros-base:noetic-foxy \
 		--build-arg ROS_DISTRO_ROS2=foxy \
 		-f Dockerfile.ros-ros2 .
+
+build-noetic-foxy:
+	docker build -t cuda-ros-base:noetic-foxy \
+		--build-arg ROS_DISTRO_ROS2=foxy \
+		-f Dockerfile.ros-ros2 .
+
 
 build-realsense:
 	docker build -t librealsense-builder \
@@ -71,6 +82,9 @@ build-opengv:
 build-zenoh:
 	docker build -t zenoh:foxy-cuda -f Dockerfile.zenoh \
 		.
+
+build-gtsam:
+	docker build -t gtsam:foxy -f Dockerfile.gtsam .
 
 push:
 	docker tag $(IMAGE_NAME) $(DOCKER_USERNAME)/$(IMAGE_NAME)

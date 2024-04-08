@@ -1,30 +1,9 @@
-FROM nvcr.io/nvidia/cuda:12.3.1-runtime-ubuntu20.04
+ARG BASE_IMAGE=cuda-ros-base:foxy
+FROM $BASE_IMAGE
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-ENV ROS_DISTRO_ROS noetic
-
-ARG ROS_DISTRO_ROS2=foxy
-
-# Install Zsh, git and other dependencies
-RUN apt-get update && apt-get install -y zsh git curl \
-    python3-pip python3-apt net-tools \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN apt update && apt install locales && \
-    locale-gen en_US en_US.UTF-8 && \ 
-    update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8 && \
-    rm -rf /var/lib/apt/lists/*
-ENV LANG=en_US.UTF-8
-
-RUN apt update && apt install curl -y && \
-    curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg && \
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null
-
-# Install ROS packages
-RUN apt update && apt install -y \
-    ros-$ROS_DISTRO_ROS2-ros-base \
-    && rm -rf /var/lib/apt/lists/*
+ENV ROS_DISTRO_ROS=noetic
 
 # Install ROS $ROS_DISTRO
 RUN sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list' \
@@ -40,4 +19,10 @@ RUN apt update && apt install -y \
     python3-rosbag \
     python3-wstool \
     python3-vcstool \
+    python3-colcon-common-extensions \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install ros1_bridge
+RUN apt update && apt install -y \
+    ros-$ROS_DISTRO-ros1-bridge \
     && rm -rf /var/lib/apt/lists/*
