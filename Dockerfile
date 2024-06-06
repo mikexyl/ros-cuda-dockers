@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=nvidia/cuda:11.7.1-runtime-ubuntu22.04
+ARG BASE_IMAGE=nvidia/cuda:12.5.0-devel-ubuntu22.04
 FROM $BASE_IMAGE
 
 # ros-core
