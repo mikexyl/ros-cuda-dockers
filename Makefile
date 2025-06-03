@@ -2,6 +2,7 @@ BASE_IMAGE=nvcr.io/nvidia/cuda:12.3.1-runtime-ubuntu20.04
 ROS_DISTRO=noetic
 IMAGE_NAME=cuda-ros-base:${ROS_DISTRO}
 DOCKER_USERNAME=mikexyliu
+USER ?= $(shell whoami)
 
 # build command to build docker image
 build:
@@ -18,11 +19,19 @@ build-foxy:
 
 build-iron:
 	docker build -t cuda-ros-base:iron \
+		--build-arg USERNAME=$(USER) \
 		-f Dockerfile.ros2 .
 
 build-humble:
-	docker build -t cuda-ros-base:humble \
+	docker buildx build -t cuda-ros-base:humble \
 		--build-arg ROS_DISTRO=humble \
+		--build-arg USERNAME=$(USER) \
+		-f Dockerfile.ros2 .
+
+build-jazzy:
+	docker build -t cuda-ros-base:jazzy \
+		--build-arg ROS_DISTRO=jazzy \
+		--build-arg USERNAME=$(USER) \
 		-f Dockerfile.ros2 .
 
 build-ros-ros2:
